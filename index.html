@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="UTF-8">
+<title>anonim</title>
+<style>
+body {
+  margin: 0;
+  font-family: Arial, sans-serif;
+  background: radial-gradient(circle, #111, #000);
+  height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  color: white;
+}
+
+.card {
+  background: #1c1c1c;
+  padding: 30px;
+  border-radius: 15px;
+  text-align: center;
+  box-shadow: 0 0 30px rgba(255,0,0,0.4);
+}
+
+input {
+  width: 90%;
+  padding: 10px;
+  margin-top: 10px;
+  border-radius: 8px;
+  border: none;
+}
+
+button {
+  margin-top: 15px;
+  padding: 10px 25px;
+  border: none;
+  background: crimson;
+  color: white;
+  border-radius: 10px;
+  cursor: pointer;
+}
+
+#bomb {
+  display: none;
+  font-size: 40px;
+  animation: pulse 0.5s infinite alternate;
+}
+
+@keyframes pulse {
+  from { transform: scale(1); color: orange; }
+  to { transform: scale(1.2); color: red; }
+}
+
+.confetti {
+  position: fixed;
+  width: 8px;
+  height: 14px;
+  animation: fly 2.5s ease-out forwards;
+}
+
+@keyframes fly {
+  from { bottom: 0; }
+  to { bottom: 110vh; transform: rotate(720deg); }
+}
+</style>
+</head>
+<body>
+
+<div class="card" id="login">
+  <h2>Giriş</h2>
+  <input id="name" placeholder="Ad Soyad">
+  <input id="pass" type="password" placeholder="Şifre">
+  <small>ipucu: lakap</small><br>
+  <button onclick="check()">Devam</button>
+</div>
+
+<div class="card" id="bomb">
+  💣 5
+</div>
+
+<script>
+const correctPass = "Paimon";
+let count = 5;
+
+function check() {
+  const pass = document.getElementById("pass").value;
+  if (pass !== correctPass) {
+    alert("Yanlış şifre");
+    return;
+  }
+
+  playSound();
+  document.getElementById("login").style.display = "none";
+  const bomb = document.getElementById("bomb");
+  bomb.style.display = "block";
+
+  const timer = setInterval(() => {
+    count--;
+    bomb.innerText = "💣 " + count;
+    if (count === 0) {
+      clearInterval(timer);
+      bomb.remove();
+      launchConfetti();
+    }
+  }, 1000);
+}
+
+function launchConfetti() {
+  for (let i = 0; i < 150; i++) {
+    const c = document.createElement("div");
+    c.className = "confetti";
+    c.style.background = `hsl(${Math.random()*360},100%,50%)`;
+    c.style.left = Math.random() < 0.5 ? "0px" : "100vw";
+    c.style.animationDelay = Math.random() + "s";
+    document.body.appendChild(c);
+  }
+}
+
+function playSound() {
+  const ctx = new (window.AudioContext || window.webkitAudioContext)();
+  const osc = ctx.createOscillator();
+  osc.type = "square";
+  osc.frequency.setValueAtTime(120, ctx.currentTime);
+  osc.connect(ctx.destination);
+  osc.start();
+  osc.stop(ctx.currentTime + 0.3);
+}
+</script>
+
+</body>
+</html>
